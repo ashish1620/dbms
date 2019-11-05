@@ -1,0 +1,21 @@
+create or replace procedure merge
+as
+	id O_EmpId.emp_id%type;
+	nm O_EmpId.name%type;
+	desg O_EmpId.designation%type;
+	ph O_EmpId.phone%type;
+
+	cursor c1 is
+	(select * from O_EmpId
+	 minus
+	 select * from N_EmpId);
+begin
+	open c1;
+	loop
+	fetch c1 into id,nm,desg,ph;
+	exit when c1%notfound;
+	insert into N_EmpId values(id,nm,desg,ph);
+	end loop;
+	close c1;
+end;
+

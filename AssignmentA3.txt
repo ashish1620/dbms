@@ -1,0 +1,201 @@
+mysql> select * from Customer;
++---------+------------+------------+--------------+-----------+---------+------------+
+| cust_no | cust_fname | cust_lname | cust_company | cust_addr | city    | cust_phone |
++---------+------------+------------+--------------+-----------+---------+------------+
+|       1 | ABC        | PQR        | FDDS         | FSDFSD    | Mumbai  | 9845612471 |
+|       2 | OPI        | YIT        | HK           | FSJKD     | Pune    | 9347312560 |
+|       3 | HGF        | NBM        | KO           | ORTKO     | Pune    | 9347312560 |
+|       4 | MBV        | WET        | PL           | KGFOH     | Kolkata | 8832310257 |
+|       5 | DSA        | CXZ        | UYU          | HKGG      | Nagpur  | 7654123095 |
++---------+------------+------------+--------------+-----------+---------+------------+
+5 rows in set (0.00 sec)
+
+
+mysql> select * from Book;
++------+-------------------+------------+-----------+--------------+------+
+| ISBN | title             | unit_price | author_no | publisher_no | year |
++------+-------------------+------------+-----------+--------------+------+
+| 1234 | The Secret        |     450.00 |        11 |           31 | 2014 |
+| 1235 | The Da Vinci Code |     500.00 |        12 |           31 | 2015 |
+| 1236 | Harry Potter      |     340.00 |        14 |           32 | 2016 |
+| 1237 | Wise Otherwise    |     200.00 |        15 |           33 | 2015 |
++------+-------------------+------------+-----------+--------------+------+
+4 rows in set (0.00 sec)
+
+mysql> select * from Author;
++-----------+--------------+-----------+
+| author_no | author_name  | country   |
++-----------+--------------+-----------+
+|        11 | Rhonda Byrne | India     |
+|        12 | Dan Brown    | USA       |
+|        13 | J.K.Rowling  | UK        |
+|        14 | Sudha Murthy | Australia |
++-----------+--------------+-----------+
+4 rows in set (0.01 sec)
+
+mysql> select * from Publisher;
++--------------+----------------+----------------+------+
+| publisher_no | publisher_name | publisher_addr | year |
++--------------+----------------+----------------+------+
+|           31 | SDS            | FDFSD          | 2014 |
+|           32 | XZC            | KNMV           | 2015 |
+|           33 | KLJ            | MNB            | 2016 |
++--------------+----------------+----------------+------+
+3 rows in set (0.00 sec)
+
+
+
+
+			2. USE OF LIKE
+
+mysql> select * from Customer where city ='Pune' || city='Mumbai' || cust_fname like 'P%' || cust_fname like 'H%';
++---------+------------+------------+--------------+-----------+--------+------------+
+| cust_no | cust_fname | cust_lname | cust_company | cust_addr | city   | cust_phone |
++---------+------------+------------+--------------+-----------+--------+------------+
+|       1 | ABC        | PQR        | FDDS         | FSDFSD    | Mumbai | 9845612471 |
+|       2 | OPI        | YIT        | HK           | FSJKD     | Pune   | 9347312560 |
+|       3 | HGF        | NBM        | KO           | ORTKO     | Pune   | 9347312560 |
++---------+------------+------------+--------------+-----------+--------+------------+
+3 rows in set (0.00 sec)
+
+
+			3. USE OF DISTINCT
+
+mysql> select distinct(city) from Customer;
++---------+
+| city    |
++---------+
+| Mumbai  |
+| Pune    |
+| Kolkata |
+| Nagpur  |
++---------+
+4 rows in set (0.00 sec)
+
+	
+			4. USE OF UPDATE
+
+
+mysql> update  Book set unit_price = unit_price+(unit_price*0.05) where year=2015;
+Query OK, 2 rows affected (0.08 sec)
+Rows matched: 2  Changed: 2  Warnings: 0
+
+mysql> select * from Book;
++------+-------------------+------------+-----------+--------------+------+
+| ISBN | title             | unit_price | author_no | publisher_no | year |
++------+-------------------+------------+-----------+--------------+------+
+| 1234 | The Secret        |     450.00 |        11 |           31 | 2014 |
+| 1235 | The Da Vinci Code |     525.00 |        12 |           31 | 2015 |
+| 1236 | Harry Potter      |     340.00 |        14 |           32 | 2016 |
+| 1237 | Wise Otherwise    |     210.00 |        15 |           33 | 2015 |
++------+-------------------+------------+-----------+--------------+------+
+4 rows in set (0.00 sec)
+
+		
+			5. DELETE ROW
+
+mysql> delete from Customer where city='Pune';
+Query OK, 2 rows affected (0.06 sec)
+
+mysql> select * from Customer;
++---------+------------+------------+--------------+-----------+---------+------------+
+| cust_no | cust_fname | cust_lname | cust_company | cust_addr | city    | cust_phone |
++---------+------------+------------+--------------+-----------+---------+------------+
+|       1 | ABC        | PQR        | FDDS         | FSDFSD    | Mumbai  | 9845612471 |
+|       4 | MBV        | WET        | PL           | KGFOH     | Kolkata | 8832310257 |
+|       5 | DSA        | CXZ        | UYU          | HKGG      | Nagpur  | 7654123095 |
++---------+------------+------------+--------------+-----------+---------+------------+
+3 rows in set (0.00 sec)
+
+
+				
+			6. USE OF UNION (IN or ||)
+
+mysql> select author_name from Author where country in('India','Australia');
++--------------+
+| author_name  |
++--------------+
+| Rhonda Byrne |
+| Sudha Murthy |
++--------------+
+2 rows in set (0.00 sec)
+
+mysql> select author_name from Author where country='India'|| country='Australia';
++--------------+
+| author_name  |
++--------------+
+| Rhonda Byrne |
+| Sudha Murthy |
++--------------+
+2 rows in set (0.00 sec)
+
+
+			7. USE OF INTERSECT(&&)
+
+mysql> select * from Publisher where year=2015 &&  year=2016;
+Empty set (0.00 sec)
+
+
+			8. USE OF MAX AND BETWEEN
+
+mysql> select max(unit_price)from Book;
++-----------------+
+| max(unit_price) |
++-----------------+
+|          525.00 |
++-----------------+
+1 row in set (0.00 sec)
+
+select max(unit_price),title from Book;
+
+mysql> select * from Book where unit_price between 320 and 450;
++------+--------------+------------+-----------+--------------+------+
+| ISBN | title        | unit_price | author_no | publisher_no | year |
++------+--------------+------------+-----------+--------------+------+
+| 1234 | The Secret   |     450.00 |        11 |           31 | 2014 |
+| 1236 | Harry Potter |     340.00 |        14 |           32 | 2016 |
++------+--------------+------------+-----------+--------------+------+
+2 rows in set (0.00 sec)
+
+		
+			9. ORDER BY
+
+mysql> select title,unit_price,year from Book order by year desc;
++-------------------+------------+------+
+| title             | unit_price | year |
++-------------------+------------+------+
+| Harry Potter      |     340.00 | 2016 |
+| The Da Vinci Code |     525.00 | 2015 |
+| Wise Otherwise    |     210.00 | 2015 |
+| The Secret        |     450.00 | 2014 |
++-------------------+------------+------+
+4 rows in set (0.00 sec)
+
+
+			10. USE OF IN
+
+mysql> select title,author_no,publisher_no from Book where year in(2000,2014,2016);
++--------------+-----------+--------------+
+| title        | author_no | publisher_no |
++--------------+-----------+--------------+
+| The Secret   |        11 |           31 |
+| Harry Potter |        14 |           32 |
++--------------+-----------+--------------+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

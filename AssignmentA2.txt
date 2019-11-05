@@ -1,0 +1,321 @@
+CREATE SEQUENCE seq_person
+MINVALUE 1
+START WITH 1
+INCREMENT BY 1
+CACHE 10; 
+
+INSERT INTO Persons (ID,FirstName,LastName)
+VALUES (seq_person.nextval,'Lars','Monsen'); 
+
+
+ALTER TABLE products
+ADD FOREIGN KEY fk_vendor(column_name)
+REFERENCES vendors(column_name)
+ON DELETE NO ACTION
+ON UPDATE CASCADE;
+
+
+
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| mysql              |
+| performance_schema |
+| sys                |
++--------------------+
+4 rows in set (0.04 sec)
+
+mysql> create database test;
+Query OK, 1 row affected (0.00 sec)
+
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| mysql              |
+| performance_schema |
+| sys                |
+| test               |
++--------------------+
+5 rows in set (0.00 sec)
+
+mysql> use test;
+Database changed
+			
+				CREATE TABLES
+
+
+mysql> create table Customer(cust_no integer(2),cust_fname varchar(20),cust_lname varchar(20),cust_company varchar(20),cust_addr varchar(20),city varchar(10),cust_phone bigint(10));
+Query OK, 0 rows affected (0.68 sec)
+
+
+				ADD PRIMARY KEY TO EXISTING COLUMN
+
+mysql> alter table Customer add Primary key(cust_no);
+Query OK, 0 rows affected (0.98 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> desc Customer;
++--------------+-------------+------+-----+---------+-------+
+| Field        | Type        | Null | Key | Default | Extra |
++--------------+-------------+------+-----+---------+-------+
+| cust_no      | int(2)      | NO   | PRI | NULL    |       |
+| cust_fname   | varchar(20) | YES  |     | NULL    |       |
+| cust_lname   | varchar(20) | YES  |     | NULL    |       |
+| cust_company | varchar(20) | YES  |     | NULL    |       |
+| cust_addr    | varchar(20) | YES  |     | NULL    |       |
+| city         | varchar(10) | YES  |     | NULL    |       |
+| cust_phone   | bigint(10)  | YES  |     | NULL    |       |
++--------------+-------------+------+-----+---------+-------+
+7 rows in set (0.01 sec)
+
+
+mysql> create table Order1(order_no integer(2),cust_no integer(2),ISBN integer(4),qty integer(2),odate date);
+Query OK, 0 rows affected (0.64 sec)
+
+mysql> create table Book(ISBN integer(4),title varchar(20),unit_price real(3,2),author_no integer(2),publisher_no integer(2),year integer(4));
+Query OK, 0 rows affected (0.66 sec)
+
+mysql> create table Author(author_no integer(2),author_name varchar(20),country varchar(20));
+Query OK, 0 rows affected (0.67 sec)
+
+mysql> create table Publisher(publisher_no integer(2),publisher_name varchar(20),publisher_addr varchar(20),year integer(4));
+Query OK, 0 rows affected (0.67 sec)
+
+mysql> show tables;
++----------------+
+| Tables_in_test |
++----------------+
+| Author         |
+| Book           |
+| Customer       |
+| Order1         |
+| Publisher      |
++----------------+
+5 rows in set (0.00 sec)
+
+mysql> alter table Order1 add Primary key(order_no);
+Query OK, 0 rows affected (0.88 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> alter table Book add Primary key(ISBN);
+Query OK, 0 rows affected (0.86 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> alter table Author add Primary key(author_no);
+Query OK, 0 rows affected (0.82 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> alter table Publisher add Primary key(publisher_no);
+Query OK, 0 rows affected (0.85 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+				ADD FOREIGN KEY TO EXISTING COLUMN
+
+mysql> alter table Order1 add constraint foreign key(cust_no) references Customer(cust_no);
+Query OK, 0 rows affected (1.10 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> desc Order1;
++----------+--------+------+-----+---------+-------+
+| Field    | Type   | Null | Key | Default | Extra |
++----------+--------+------+-----+---------+-------+
+| order_no | int(2) | NO   | PRI | NULL    |       |
+| cust_no  | int(2) | YES  | MUL | NULL    |       |
+| ISBN     | int(4) | YES  |     | NULL    |       |
+| qty      | int(2) | YES  |     | NULL    |       |
+| odate    | date   | YES  |     | NULL    |       |
++----------+--------+------+-----+---------+-------+
+5 rows in set (0.00 sec)
+
+mysql> alter table Order1 add constraint foreign key(ISBN) references Book(ISBN);
+Query OK, 0 rows affected (1.21 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+		
+				INSERT INTO TABLE
+
+mysql> insert into Customer(cust_no,cust_fname,cust_lname,cust_company,cust_addr,city,cust_phone)values(1,'ABC','PQR','FDDS','FSDFSD','Mumbai',9845612471);
+Query OK, 1 row affected (0.40 sec)
+
+mysql> insert into Customer(cust_no,cust_fname,cust_lname,cust_company,cust_addr,city,cust_phone)values(2,'OPI','YIT','HK','FSJKD','Pune',9347312560);
+Query OK, 1 row affected (0.37 sec)
+
+mysql> select * from Customer;
++---------+------------+------------+--------------+-----------+--------+------------+
+| cust_no | cust_fname | cust_lname | cust_company | cust_addr | city   | cust_phone |
++---------+------------+------------+--------------+-----------+--------+------------+
+|       1 | ABC        | PQR        | FDDS         | FSDFSD    | Mumbai | 9845612471 |
+|       2 | OPI        | YIT        | HK           | FSJKD     | Pune   | 9347312560 |
++---------+------------+------------+--------------+-----------+--------+------------+
+2 rows in set (0.00 sec)
+
+mysql> insert into Customer(cust_no,cust_fname,cust_lname,cust_company,cust_addr,city,cust_phone)values(3,'HGF','NBM','KO','ORTKO','Pune',9347312560);
+Query OK, 1 row affected (0.39 sec)
+
+mysql> insert into Customer(cust_no,cust_fname,cust_lname,cust_company,cust_addr,city,cust_phone)values(4,'MBV','WET','PL','KGFOH','Kolkata',8832
+Query OK, 1 row affected (0.37 sec)
+
+
+				SELECT QUERY
+
+mysql> select * from Customer;                                                                                                                 +---------+------------+------------+--------------+-----------+---------+------------+
+| cust_no | cust_fname | cust_lname | cust_company | cust_addr | city    | cust_phone |
++---------+------------+------------+--------------+-----------+---------+------------+
+|       1 | ABC        | PQR        | FDDS         | FSDFSD    | Mumbai  | 9845612471 |
+|       2 | OPI        | YIT        | HK           | FSJKD     | Pune    | 9347312560 |
+|       3 | HGF        | NBM        | KO           | ORTKO     | Pune    | 9347312560 |
+|       4 | MBV        | WET        | PL           | KGFOH     | Kolkata | 8832310257 |
++---------+------------+------------+--------------+-----------+---------+------------+
+4 rows in set (0.00 sec)
+
+			
+				CREATE VIEW ON TABLES
+
+mysql> create view Customer_view as 
+    -> SELECT cust_no,cust_fname,cust_company,cust_addr,city,cust_phone from Customer;
+Query OK, 0 rows affected (0.37 sec)
+
+mysql> select * from Customer_view;
++---------+------------+--------------+-----------+---------+------------+
+| cust_no | cust_fname | cust_company | cust_addr | city    | cust_phone |
++---------+------------+--------------+-----------+---------+------------+
+|       1 | ABC        | FDDS         | FSDFSD    | Mumbai  | 9845612471 |
+|       2 | OPI        | HK           | FSJKD     | Pune    | 9347312560 |
+|       3 | HGF        | KO           | ORTKO     | Pune    | 9347312560 |
+|       4 | MBV        | PL           | KGFOH     | Kolkata | 8832310257 |
++---------+------------+--------------+-----------+---------+------------+
+4 rows in set (0.00 sec)
+
+
+				CREATE INDEX ON TABLE
+
+
+mysql> create index Customer_index on Customer(cust_no);
+Query OK, 0 rows affected (0.41 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+
+mysql> select * from Customer where cust_company='HK';
++---------+------------+------------+--------------+-----------+------+------------+
+| cust_no | cust_fname | cust_lname | cust_company | cust_addr | city | cust_phone |
++---------+------------+------------+--------------+-----------+------+------------+
+|       2 | OPI        | YIT        | HK           | FSJKD     | Pune | 9347312560 |
++---------+------------+------------+--------------+-----------+------+------------+
+1 row in set (0.00 sec)
+
+
+				DROP FOREIGN KEY CONSTRAINT
+
+mysql> alter table Order1 drop foreign key Order1_ibfk_1;
+Query OK, 0 rows affected (0.10 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> desc Order1;
++----------+--------+------+-----+---------+-------+
+| Field    | Type   | Null | Key | Default | Extra |
++----------+--------+------+-----+---------+-------+
+| order_no | int(2) | NO   | PRI | NULL    |       |
+| cust_no  | int(2) | YES  | MUL | NULL    |       |
+| ISBN     | int(4) | YES  | MUL | NULL    |       |
+| qty      | int(2) | YES  |     | NULL    |       |
+| odate    | date   | YES  |     | NULL    |       |
++----------+--------+------+-----+---------+-------+
+5 rows in set (0.00 sec)
+
+
+				AUTO_INCREMENT ON EXISTING TABLE
+
+mysql> alter table Customer modify cust_no integer(2) not null auto_increment;
+Query OK, 4 rows affected (0.98 sec)
+Records: 4  Duplicates: 0  Warnings: 0
+
+
+mysql> insert into Customer(cust_fname,cust_lname,cust_company,cust_addr,city,cust_phone)values('DSA','CXZ','UYU','HKGG','Nagpur',7654123095); Query OK, 1 row affected (0.07 sec)
+
+mysql> select * from Customer;
++---------+------------+------------+--------------+-----------+---------+------------+
+| cust_no | cust_fname | cust_lname | cust_company | cust_addr | city    | cust_phone |
++---------+------------+------------+--------------+-----------+---------+------------+
+|       1 | ABC        | PQR        | FDDS         | FSDFSD    | Mumbai  | 9845612471 |
+|       2 | OPI        | YIT        | HK           | FSJKD     | Pune    | 9347312560 |
+|       3 | HGF        | NBM        | KO           | ORTKO     | Pune    | 9347312560 |
+|       4 | MBV        | WET        | PL           | KGFOH     | Kolkata | 8832310257 |
+|       5 | DSA        | CXZ        | UYU          | HKGG      | Nagpur  | 7654123095 |
++---------+------------+------------+--------------+-----------+---------+------------+
+5 rows in set (0.00 sec)
+
+
+				CHANGING INITIAL VALUE OF SEQUENCE
+	
+mysql> alter table Customer auto_increment=10;
+Query OK, 0 rows affected (0.06 sec)
+
+
+				USE OF SYNOYMN 'AS'
+
+
+mysql> select a.cust_no,a.cust_fname,a.cust_phone from Customer as a;
++---------+------------+------------+
+| cust_no | cust_fname | cust_phone |
++---------+------------+------------+
+|       1 | ABC        | 9845612471 |
+|       2 | OPI        | 9347312560 |
+|       3 | HGF        | 9347312560 |
+|       4 | MBV        | 8832310257 |
+|       5 | DSA        | 7654123095 |
++---------+------------+------------+
+5 rows in set (0.00 sec)
+
+mysql> select a.cust_no,a.cust_fname,a.cust_phone from Customer a;
++---------+------------+------------+
+| cust_no | cust_fname | cust_phone |
++---------+------------+------------+
+|       1 | ABC        | 9845612471 |
+|       2 | OPI        | 9347312560 |
+|       3 | HGF        | 9347312560 |
+|       4 | MBV        | 8832310257 |
+|       5 | DSA        | 7654123095 |
++---------+------------+------------+
+5 rows in set (0.00 sec)
+
+
+				ON DELETE CASCADE OPTION		
+				
+
+mysql> alter table Order1 add foreign key fk(cust_no) references Customer(cust_no) on delete cascade;
+Query OK, 0 rows affected (0.85 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+
+mysql> insert into Order1(order_no,cust_no,ISBN,qty,odate)values(1,1,1234,5,'2018/08/01');
+Query OK, 1 row affected (0.08 sec)
+
+mysql> select * from Order1;
++----------+---------+------+------+------------+
+| order_no | cust_no | ISBN | qty  | odate      |
++----------+---------+------+------+------------+
+|        1 |       1 | 1234 |    5 | 2018-08-01 |
++----------+---------+------+------+------------+
+1 row in set (0.00 sec)
+
+mysql> delete from Customer where cust_no=1;
+Query OK, 1 row affected (0.08 sec)
+
+mysql> select * from Order1;
+Empty set (0.00 sec)
+
+mysql> select * from Customer;
++---------+------------+------------+--------------+-----------+---------+------------+
+| cust_no | cust_fname | cust_lname | cust_company | cust_addr | city    | cust_phone |
++---------+------------+------------+--------------+-----------+---------+------------+
+|       2 | OPI        | YIT        | HK           | FSJKD     | Pune    | 9347312560 |
+|       3 | HGF        | NBM        | KO           | ORTKO     | Pune    | 9347312560 |
+|       4 | MBV        | WET        | PL           | KGFOH     | Kolkata | 8832310257 |
+|       5 | DSA        | CXZ        | UYU          | HKGG      | Nagpur  | 7654123095 |
++---------+------------+------------+--------------+-----------+---------+------------+
+4 rows in set (0.00 sec)
+

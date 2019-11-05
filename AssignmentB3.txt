@@ -1,0 +1,60 @@
+
+			INSERT DOCUMENT
+
+db.product.insert({name: "Cake", price: 50, quantity: 3});
+
+			READ DOCUMENT
+
+> db.product.find().pretty()
+{
+	"_id" : ObjectId("5b98c8734f88ac2e22720416"),
+	"name" : "Biscuits",
+	"price" : 30,
+	"quantity" : 5
+}
+{
+	"_id" : ObjectId("5b98ca8f4f88ac2e22720417"),
+	"name" : "Cake",
+	"price" : 50,
+	"quantity" : 3
+}
+{
+	"_id" : ObjectId("5b98caa74f88ac2e22720418"),
+	"name" : "Apple",
+	"price" : 100,
+	"quantity" : 6
+}
+{
+	"_id" : ObjectId("5b98cac64f88ac2e22720419"),
+	"name" : "Donuts",
+	"price" : 70,
+	"quantity" : 15
+}
+
+
+			UPDATE DOCUMENT
+
+db.product.update({name: "Apple"},{$set:{name: "Mango"}})
+
+			DELETE DOCUMENT
+
+ db.product.remove({price: 100})
+		
+
+		INDEXING
+db.product.createIndex({productId:1},{collation:{locale:"fr"}});
+{
+	"createdCollectionAutomatically" : false,
+	"numIndexesBefore" : 1,
+	"numIndexesAfter" : 2,
+	"ok" : 1
+}
+
+				AGGREGATE
+ db.product.aggregate([{$group: { _id: "$name",total :{$sum: "$price"}}},])
+{ "_id" : "Donuts", "total" : 70 }
+{ "_id" : "Apple", "total" : 100 }
+{ "_id" : "Cake", "total" : 50 }
+{ "_id" : "Biscuits", "total" : 30 }
+
+

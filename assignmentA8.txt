@@ -1,0 +1,47 @@
+create table Student_10(Rollno number(2),Name varchar2(20),DateOfAdmission date,Branch varchar2(10),Percent number(10,2),Status varchar2(10));
+
+create table Alumni_10(Rollno number(2),Name varchar2(20),DateOfAdmission date,Branch varchar2(10),Percent number(10,2),Status varchar2(10));
+
+insert into Student_10(Rollno,Name,DateOfAdmission,Branch,Percent,Status)values(01,'ABC','15-jun-2018','Comp',86.78,'pass');
+
+alter table ALumni_10 modify Percent number(10,2);
+
+delete from Student_10 where ROllno=01;
+
+
+create or replace trigger addToAlumni1
+before delete on Student_10
+for each row
+begin
+	insert into Alumni_10(Rollno,Name,DateOfAdmission,Branch,Percent,Status)values(:old.Rollno,:old.Name,:old.DateOfAdmission,:old.Branch,:old.Percent,:old.Status);
+end;
+
+create or replace trigger addToAlumni2
+after delete on Student_10
+for each row
+begin
+	insert into Alumni_10(Rollno,Name,DateOfAdmission,Branch,Percent,Status)values(:new.Rollno,:new.Name,:new.DateOfAdmission,:new.Branch,:new.Percent,:new.Status);
+end;
+
+create or replace trigger addToAlumni3
+before update on Student_10
+for each row
+begin
+	insert into Alumni_10(Rollno,Name,DateOfAdmission,Branch,Percent,Status)values(:old.Rollno,:old.Name,:old.DateOfAdmission,:old.Branch,:old.Percent,:old.Status);
+end;
+
+create or replace trigger addToAlumni4
+after update on Student_10
+for each row
+begin
+	insert into Alumni_10(Rollno,Name,DateOfAdmission,Branch,Percent,Status)values(:new.Rollno,:new.Name,:new.DateOfAdmission,:new.Branch,:new.Percent,:new.Status);
+end;
+
+
+
+
+
+
+
+
+

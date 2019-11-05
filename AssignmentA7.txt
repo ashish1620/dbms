@@ -1,0 +1,28 @@
+create or replace procedure proc_grade
+as
+	id number(2);
+	purchase number(6);
+	nm varchar2(20);
+	class varchar2(10);
+	cursor c1 is
+	(select cust_id,name,total_purchase from Customer);
+begin
+	
+	open c1;
+	loop
+		fetch c1 into id,nm,purchase;
+		exit when c1%notfound;
+		if(purchase<=20000 and purchase>=10000)then
+			class:='Platinum';
+		elsif(purchase<=9999 and purchase>=5000)then
+			class:='Gold';
+		
+		elsif(purchase<=4999 and purchase>=2000)then
+			class:='Silver';
+		else
+			class:='None';
+		end if;
+		insert into Category values(id,nm,class);
+	end loop;
+	close c1;
+end;

@@ -1,0 +1,235 @@
+truncate table Order1;   // to truncate values
+
+mysql> select * from Order1;
++----------+---------+------+------+------------+
+| order_no | cust_no | ISBN | qty  | odate      |
++----------+---------+------+------+------------+
+|       10 |       1 | 1234 |   50 | 2018-02-01 |
+|       11 |       2 | 1235 |   32 | 2018-03-04 |
+|       12 |       3 | 1235 |   21 | 2018-04-05 |
++----------+---------+------+------+------------+
+
+
+mysql> select * from Customer;
++---------+------------+------------+--------------+-----------+---------+------------+
+| cust_no | cust_fname | cust_lname | cust_company | cust_addr | city    | cust_phone |
++---------+------------+------------+--------------+-----------+---------+------------+
+|       1 | ABC        | PQR        | FDDS         | FSDFSD    | Mumbai  | 9845612471 |
+|       4 | MBV        | WET        | PL           | KGFOH     | Kolkata | 8832310257 |
+|       5 | DSA        | CXZ        | UYU          | HKGG      | Nagpur  | 7654123095 |
++---------+------------+------------+--------------+-----------+---------+------------+
+3 rows in set (0.00 sec)
+
+
+mysql> select * from Author;
++-----------+--------------+-----------+
+| author_no | author_name  | country   |
++-----------+--------------+-----------+
+|        11 | Rhonda Byrne | India     |
+|        12 | Dan Brown    | USA       |
+|        13 | J.K.Rowling  | UK        |
+|        14 | Sudha Murthy | Australia |
++-----------+--------------+-----------+
+4 rows in set (0.00 sec)
+
+
+mysql> select * from Book;
++------+-------------------+------------+-----------+--------------+------+
+| ISBN | title             | unit_price | author_no | publisher_no | year |
++------+-------------------+------------+-----------+--------------+------+
+| 1234 | The Secret        |     450.00 |        11 |           31 | 2014 |
+| 1235 | The Da Vinci Code |     525.00 |        12 |           31 | 2015 |
+| 1236 | Harry Potter      |     340.00 |        14 |           32 | 2016 |
+| 1237 | Wise Otherwise    |     210.00 |        15 |           33 | 2015 |
++------+-------------------+------------+-----------+--------------+------+
+4 rows in set (0.00 sec)
+
+
+
+
+				1. NATURAL JOIN
+
+mysql> select * from Customer natural join Order1;
++---------+------------+------------+--------------+-----------+--------+------------+----------+------+------+------------+
+| cust_no | cust_fname | cust_lname | cust_company | cust_addr | city   | cust_phone | order_no | ISBN | qty  | odate      |
++---------+------------+------------+--------------+-----------+--------+------------+----------+------+------+------------+
+|       1 | ABC        | PQR        | FDDS         | FSDFSD    | Mumbai | 9845612471 |       10 | 1234 |   50 | 2018-02-01 |
++---------+------------+------------+--------------+-----------+--------+------------+----------+------+------+------------+
+1 row in set (0.00 sec)
+
+
+				2. INNER JOIN
+
+mysql> select b.title,a.author_name,a.country from Book b 
+    -> INNER JOIN Author a 
+    -> on b.author_no=a.author_no;
++-------------------+--------------+-----------+
+| title             | author_name  | country   |
++-------------------+--------------+-----------+
+| The Secret        | Rhonda Byrne | India     |
+| The Da Vinci Code | Dan Brown    | USA       |
+| Harry Potter      | Sudha Murthy | Australia |
++-------------------+--------------+-----------+
+3 rows in set (0.00 sec)
+
+
+				3. LEFT JOIN-INNER JOIN (Order not placed)
+
+mysql> select c.cust_no,c.cust_fname,o.order_no from Customer c LEFT JOIN Order1 o on c.cust_no=o.cust_no where c.cust_no not in(select c.cust_no from Customer c INNER JOIN Order1 o on o.cust_no=c.cust_no);
++---------+------------+----------+
+| cust_no | cust_fname | order_no |
++---------+------------+----------+
+|       4 | MBV        |     NULL |
+|       5 | DSA        |     NULL |
++---------+------------+----------+
+2 rows in set (0.00 sec)
+
+
+				4. Order not placed
+
+mysql> select b.ISBN,o.order_no,b.title from Book b LEFT JOIN Order1 o on o.ISBN=b.ISBN where b.ISBN not in(select b.ISBN from Book b INNER JOIN Order1 o on b.ISBN=o.ISBN);
++------+----------+----------------+
+| ISBN | order_no | title          |
++------+----------+----------------+
+| 1237 |     NULL | Wise Otherwise |
++------+----------+----------------+
+1 row in set (0.00 sec)
+
+
+				5. JOINING MORE THAN 2 TABLES
+
+mysql> select c.cust_no,b.title,b.author_no,b.year from Customer c INNER JOIN Order1 o on o.cust_no=c.cust_no INNER JOIN Book b on o.ISBN=b.ISBN where o.ISBN=1234;
++---------+------------+-----------+------+
+| cust_no | title      | author_no | year |
++---------+------------+-----------+------+
+|       1 | The Secret |        11 | 2014 |
++---------+------------+-----------+------+
+1 row in set (0.00 sec)
+
+
+				6. USE OF COUNT
+
+mysql> select count(b.title),count(c.cust_fname) from Customer c INNER JOIN Order1 o on o.cust_no=c.cust_no INNER JOIN Book b on b.ISBN=o.ISBN; 
++----------------+---------------------+
+| count(b.title) | count(c.cust_fname) |
++----------------+---------------------+
+|              1 |                   1 |
++----------------+---------------------+
+1 row in set (0.00 sec)
+
+
+				7. USE OF IN
+
+mysql> SELECT c.cust_no,o.order_no,b.ISBN from Customer c INNER JOIN Order1 o on o.cust_no=c.cust_no INNER JOIN Book b on b.ISBN=o.ISBN where b.title in('Mysql');
++---------+----------+------+
+| cust_no | order_no | ISBN |
++---------+----------+------+
+|       3 |       12 | 1237 |
++---------+----------+------+
+1 row in set (0.00 sec)
+
+
+				8. USE OF IN
+
+
+mysql> select c.cust_company,b.title from Customer c INNER JOIN Order1 o on o.cust_no=c.cust_no INNER JOIN Book b on b.ISBN=o.ISBN where b.year in(2015);
++--------------+-------+
+| cust_company | title |
++--------------+-------+
+| PL           | Mysql |
++--------------+-------+
+1 row in set (0.00 sec)
+
+
+				9. COMPLEX VIEW
+
+mysql> create view Complex1 as select b.ISBN,b.title,b.unit_price,b.author_no,b.publisher_no,b.year,a.author_name,a.country from Book b INNER JOIN Author a on a.author_no=b.author_no;
+Query OK, 0 rows affected (0.07 sec)
+
+mysql> select * from Complex1;
++------+-------------------+------------+-----------+--------------+------+--------------+-----------+
+| ISBN | title             | unit_price | author_no | publisher_no | year | author_name  | country   |
++------+-------------------+------------+-----------+--------------+------+--------------+-----------+
+| 1234 | The Secret        |     450.00 |        11 |           31 | 2014 | Rhonda Byrne | India     |
+| 1235 | The Da Vinci Code |     525.00 |        12 |           31 | 2015 | Dan Brown    | USA       |
+| 1236 | Harry Potter      |     340.00 |        14 |           32 | 2016 | Sudha Murthy | Australia |
++------+-------------------+------------+-----------+--------------+------+--------------+-----------+
+3 rows in set (0.00 sec)
+
+
+				10. SIMPLE VIEW OPERATIONS
+
+			
+					INSERT INTO VIEW
+	
+mysql> insert into Customer_view(cust_fname,cust_company,cust_addr,city,cust_phone)values('BCV','JH','UJGYJ','Mumbai',9214578120);
+Query OK, 1 row affected (0.06 sec)
+
+mysql> select * from Customer_view;
++---------+------------+--------------+-----------+---------+------------+
+| cust_no | cust_fname | cust_company | cust_addr | city    | cust_phone |
++---------+------------+--------------+-----------+---------+------------+
+|       1 | ABC        | FDDS         | FSDFSD    | Mumbai  | 9845612471 |
+|       3 | MBV        | PL           | KGFOH     | Kolkata | 8832310257 |
+|       5 | DSA        | UYU          | HKGG      | Nagpur  | 7654123095 |
+|       6 | BCV        | JH           | UJGYJ     | Mumbai  | 9214578120 |
++---------+------------+--------------+-----------+---------+------------+
+4 rows in set (0.00 sec)
+
+mysql> select * from Customer;
++---------+------------+------------+--------------+-----------+---------+------------+
+| cust_no | cust_fname | cust_lname | cust_company | cust_addr | city    | cust_phone |
++---------+------------+------------+--------------+-----------+---------+------------+
+|       1 | ABC        | PQR        | FDDS         | FSDFSD    | Mumbai  | 9845612471 |
+|       3 | MBV        | WET        | PL           | KGFOH     | Kolkata | 8832310257 |
+|       5 | DSA        | CXZ        | UYU          | HKGG      | Nagpur  | 7654123095 |
+|       6 | BCV        | NULL       | JH           | UJGYJ     | Mumbai  | 9214578120 |
++---------+------------+------------+--------------+-----------+---------+------------+
+4 rows in set (0.00 sec)
+
+				
+					UPDATE VIEW
+
+mysql> update Customer_view set cust_company='ER' where cust_fname='BCV';
+Query OK, 1 row affected (0.37 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> select * from Customer_view;
++---------+------------+--------------+-----------+---------+------------+
+| cust_no | cust_fname | cust_company | cust_addr | city    | cust_phone |
++---------+------------+--------------+-----------+---------+------------+
+|       1 | ABC        | FDDS         | FSDFSD    | Mumbai  | 9845612471 |
+|       3 | MBV        | PL           | KGFOH     | Kolkata | 8832310257 |
+|       5 | DSA        | UYU          | HKGG      | Nagpur  | 7654123095 |
+|       6 | BCV        | ER           | UJGYJ     | Mumbai  | 9214578120 |
++---------+------------+--------------+-----------+---------+------------+
+4 rows in set (0.00 sec)
+
+
+					DELETE ROW FROM VIEW
+
+			
+mysql> delete from Customer_view where cust_company='ER';
+Query OK, 1 row affected (0.37 sec)
+
+mysql> select * from Customer_view;
++---------+------------+--------------+-----------+---------+------------+
+| cust_no | cust_fname | cust_company | cust_addr | city    | cust_phone |
++---------+------------+--------------+-----------+---------+------------+
+|       1 | ABC        | FDDS         | FSDFSD    | Mumbai  | 9845612471 |
+|       3 | MBV        | PL           | KGFOH     | Kolkata | 8832310257 |
+|       5 | DSA        | UYU          | HKGG      | Nagpur  | 7654123095 |
++---------+------------+--------------+-----------+---------+------------+
+3 rows in set (0.00 sec)
+
+
+					DROP VIEW
+
+
+mysql> drop view Customer_view;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> select * from Customer_view;
+ERROR 1146 (42S02): Table 'test.Customer_view' doesn't exist
+
+				
